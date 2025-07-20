@@ -1,50 +1,48 @@
 name: "Build"
+
 on:
-  workflow_dispatch: ~
   push:
-    paths:
-      - "**.java"
     branches:
-      - "stable"
-      - "development"
-      - "unstable"
-  pull_request:
-    paths:
-      - "**.java"
-    types:
-      - opened
-      - synchronize
-      - reopened
+      - main
+
 jobs:
   Build-Server-Jar:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: '17'
-      - name: Cache gradle files
+          
+      - name: Cache Gradle files
         uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
             ./.gradle/loom-cache
-          key: ${{ runner.os }}-gradle-${{ hashFiles('*.gradle', 'gradle.properties', '**/*.accesswidener') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', 'gradle.properties', '**/*.accesswidener') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+            
       - name: Download Handbook
         uses: suisei-cn/actions-download-file@v1.4.0
         with:
           url: https://api.grasscutter.io/static/handbook.html
           target: src/main/resources/html/
+          
       - name: Run Gradle
         run: ./gradlew assembleDebug
+        
+      - name: List files
+        run: ls -R  # 列出文件，确保 APK 文件存在
+        
       - name: Upload build
         uses: actions/upload-artifact@v4
         with:
           name: UnknownAnimeGamePS
-          path: '**/*.apk'
+          path: '**/*.apk'  # 确保匹配所有 APK 文件

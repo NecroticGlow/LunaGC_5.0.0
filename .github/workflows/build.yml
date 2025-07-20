@@ -35,6 +35,9 @@ jobs:
           url: https://api.grasscutter.io/static/handbook.html
           target: src/main/resources/html/
           
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew  # 添加此步骤以确保 gradlew 可执行
+        
       - name: Run Gradle
         run: ./gradlew assembleDebug
         

@@ -47,4 +47,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: UnknownAnimeGamePS
-          path: *.apk
+          path: '**/*.apk'
